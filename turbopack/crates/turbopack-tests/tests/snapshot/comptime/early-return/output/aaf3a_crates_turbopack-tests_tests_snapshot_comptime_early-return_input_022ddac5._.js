@@ -41,8 +41,7 @@ function a() {
     let a12, a15, a17, a18, a19;
     function a20() {
         return;
-        //TURBOPACK unreachable
-        ;
+        a21();
     }
     var a28;
 }

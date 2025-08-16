@@ -18,7 +18,7 @@ use swc_core::{
         },
         visit::{
             AstParentKind, VisitMut, VisitMutWith,
-            fields::{BlockStmtField, SwitchCaseField},
+            fields::{ArrowExprField, BlockStmtField, SwitchCaseField},
         },
     },
     quote,
@@ -152,12 +152,17 @@ impl Unreachable {
                 }) as Box<dyn AstModifier>,
             )],
             AstPathRange::StartAfter(path) => {
+                eprintln!("Marking everything after: {path:?} as unreachable");
                 let mut parent = &path[..];
                 while !parent.is_empty()
-                    && !matches!(parent.last().unwrap(), AstParentKind::Stmt(_))
+                    && !matches!(
+                        parent.last().unwrap(),
+                        AstParentKind::Stmt(_) | AstParentKind::ArrowExpr(ArrowExprField::Body)
+                    )
                 {
                     parent = &parent[0..parent.len() - 1];
                 }
+
                 if !parent.is_empty() {
                     parent = &parent[0..parent.len() - 1];
 
