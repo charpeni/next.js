@@ -10,14 +10,10 @@ import {
 } from '../../../scripts/reset-project.mjs'
 import fetch from 'node-fetch'
 import { Span } from 'next/dist/trace'
-import { stripBrowserLogs } from '../next-test-utils'
 
 export class NextDeployInstance extends NextInstance {
   private _cliOutput: string
   private _buildId: string
-  // Allow tests to control browser log filtering
-  public stripBrowserLogsFromOutput: boolean =
-    process.env.NEXT_TEST_STRIP_BROWSER_LOGS !== 'false'
 
   public get buildId() {
     // get deployment ID via fetch since we can't access
@@ -173,9 +169,7 @@ export class NextDeployInstance extends NextInstance {
   }
 
   public get cliOutput() {
-    return this.stripBrowserLogsFromOutput
-      ? stripBrowserLogs(this._cliOutput || '')
-      : this._cliOutput || ''
+    return this._cliOutput || ''
   }
 
   public async start() {

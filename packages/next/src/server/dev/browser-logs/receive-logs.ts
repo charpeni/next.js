@@ -326,11 +326,16 @@ async function handleTable(
   })()
 
   // we can't inline pass browser prefix, but it looks better multiline for table anyways
-  forwardConsole.log(browserPrefix)
-  forwardConsole.table(...deserializedArgs)
+  if (!process.env.__NEXT_TEST_MODE || process.env.NEXT_TEST_BROWSER_LOGS) {
+    forwardConsole.log(browserPrefix)
+    forwardConsole.table(...deserializedArgs)
+  }
 
   const displayedSourceLocation = getDisplayedSourceLocation(location, config)
-  if (displayedSourceLocation) {
+  if (
+    displayedSourceLocation &&
+    (!process.env.__NEXT_TEST_MODE || process.env.NEXT_TEST_BROWSER_LOGS)
+  ) {
     forwardConsole.log(displayedSourceLocation)
   }
 }
@@ -354,11 +359,13 @@ async function handleTrace(
   )
 
   if (!entry.consoleMethodStack) {
-    forwardConsole.log(
-      browserPrefix,
-      ...deserializedArgs,
-      '[Trace unavailable]'
-    )
+    if (!process.env.__NEXT_TEST_MODE || process.env.NEXT_TEST_BROWSER_LOGS) {
+      forwardConsole.log(
+        browserPrefix,
+        ...deserializedArgs,
+        '[Trace unavailable]'
+      )
+    }
     return
   }
 
@@ -371,12 +378,14 @@ async function handleTrace(
   const location = getConsoleLocation(mappedIgnored)
   const displayedSourceLocation = getDisplayedSourceLocation(location, config)
 
-  forwardConsole.log(
-    browserPrefix,
-    ...deserializedArgs,
-    `\n${mapped.stack}`,
-    ...(displayedSourceLocation ? [`\n${displayedSourceLocation}`] : [])
-  )
+  if (!process.env.__NEXT_TEST_MODE || process.env.NEXT_TEST_BROWSER_LOGS) {
+    forwardConsole.log(
+      browserPrefix,
+      ...deserializedArgs,
+      `\n${mapped.stack}`,
+      ...(displayedSourceLocation ? [`\n${displayedSourceLocation}`] : [])
+    )
+  }
 }
 
 async function handleDir(
@@ -411,12 +420,16 @@ async function handleDir(
       process.stdout.write = originalWrite
     }
     const preserved = captured.replace(/\r?\n$/, '')
-    originalWrite(
-      `${browserPrefix}${preserved}${displayedSourceLocation ? ` ${displayedSourceLocation}` : ''}\n`
-    )
+    if (!process.env.__NEXT_TEST_MODE || process.env.NEXT_TEST_BROWSER_LOGS) {
+      originalWrite(
+        `${browserPrefix}${preserved}${displayedSourceLocation ? ` ${displayedSourceLocation}` : ''}\n`
+      )
+    }
     return
   }
-  consoleMethod(browserPrefix, ...loggableEntry)
+  if (!process.env.__NEXT_TEST_MODE || process.env.NEXT_TEST_BROWSER_LOGS) {
+    consoleMethod(browserPrefix, ...loggableEntry)
+  }
 }
 
 async function handleDefaultConsole(
@@ -437,7 +450,12 @@ async function handleDefaultConsole(
     config
   )
   const consoleMethod = forwardConsole[entry.method] || forwardConsole.log
-  ;(consoleMethod as (...args: any[]) => void)(browserPrefix, ...withStackEntry)
+  if (!process.env.__NEXT_TEST_MODE || process.env.NEXT_TEST_BROWSER_LOGS) {
+    ;(consoleMethod as (...args: any[]) => void)(
+      browserPrefix,
+      ...withStackEntry
+    )
+  }
 }
 
 export async function handleLog(
@@ -509,7 +527,12 @@ export async function handleLog(
             distDir,
             config
           )
-          forwardConsole.error(browserPrefix, ...consoleArgs)
+          if (
+            !process.env.__NEXT_TEST_MODE ||
+            process.env.NEXT_TEST_BROWSER_LOGS
+          ) {
+            forwardConsole.error(browserPrefix, ...consoleArgs)
+          }
           break
         }
         // formatted error is an explicit error event (rejections, uncaught errors)
@@ -519,7 +542,12 @@ export async function handleLog(
             ctx,
             distDir
           )
-          forwardConsole.error(browserPrefix, ...formattedArgs)
+          if (
+            !process.env.__NEXT_TEST_MODE ||
+            process.env.NEXT_TEST_BROWSER_LOGS
+          ) {
+            forwardConsole.error(browserPrefix, ...formattedArgs)
+          }
           break
         }
         default: {
@@ -534,21 +562,40 @@ export async function handleLog(
             distDir,
             config
           )
-          forwardConsole.error(browserPrefix, ...consoleArgs)
+          if (
+            !process.env.__NEXT_TEST_MODE ||
+            process.env.NEXT_TEST_BROWSER_LOGS
+          ) {
+            forwardConsole.error(browserPrefix, ...consoleArgs)
+          }
           break
         }
         case 'console': {
           const consoleMethod =
             forwardConsole[entry.method] || forwardConsole.log
           const consoleArgs = await prepareConsoleArgs(entry, ctx, distDir)
-          ;(consoleMethod as (...args: any[]) => void)(
-            browserPrefix,
-            ...consoleArgs
-          )
+          if (
+            !process.env.__NEXT_TEST_MODE ||
+            process.env.NEXT_TEST_BROWSER_LOGS
+          ) {
+            ;(consoleMethod as (...args: any[]) => void)(
+              browserPrefix,
+              ...consoleArgs
+            )
+          }
           break
         }
         case 'formatted-error': {
-          forwardConsole.error(browserPrefix, `${entry.prefix}\n`, entry.stack)
+          if (
+            !process.env.__NEXT_TEST_MODE ||
+            process.env.NEXT_TEST_BROWSER_LOGS
+          ) {
+            forwardConsole.error(
+              browserPrefix,
+              `${entry.prefix}\n`,
+              entry.stack
+            )
+          }
           break
         }
         default: {
@@ -556,10 +603,8 @@ export async function handleLog(
       }
     }
 
-    // Add end marker after EACH entry in test mode
-    if (process.env.__NEXT_TEST_MODE) {
-      console.log(cyan('[browser end]'))
-    }
+    // In test mode, we process everything but skip console output
+    // unless NEXT_TEST_BROWSER_LOGS is set
   }
 }
 

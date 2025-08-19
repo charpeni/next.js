@@ -1,14 +1,11 @@
 import spawn from 'cross-spawn'
 import { Span } from 'next/dist/trace'
 import { NextInstance } from './base'
-import { retry, waitFor, stripBrowserLogs } from 'next-test-utils'
+import { retry, waitFor } from 'next-test-utils'
 import stripAnsi from 'strip-ansi'
 
 export class NextDevInstance extends NextInstance {
   private _cliOutput: string = ''
-  // Allow tests to control browser log filtering
-  public stripBrowserLogsFromOutput: boolean =
-    process.env.NEXT_TEST_STRIP_BROWSER_LOGS !== 'false'
 
   public get buildId() {
     return 'development'
@@ -20,9 +17,7 @@ export class NextDevInstance extends NextInstance {
   }
 
   public get cliOutput() {
-    return this.stripBrowserLogsFromOutput
-      ? stripBrowserLogs(this._cliOutput || '')
-      : this._cliOutput || ''
+    return this._cliOutput || ''
   }
 
   public async start() {

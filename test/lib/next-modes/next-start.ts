@@ -4,24 +4,18 @@ import { NextInstance } from './base'
 import spawn from 'cross-spawn'
 import { Span } from 'next/dist/trace'
 import stripAnsi from 'strip-ansi'
-import { stripBrowserLogs } from '../next-test-utils'
 
 export class NextStartInstance extends NextInstance {
   private _buildId: string
   private _cliOutput: string = ''
   private spawnOpts: import('child_process').SpawnOptions
-  // Allow tests to control browser log filtering
-  public stripBrowserLogsFromOutput: boolean =
-    process.env.NEXT_TEST_STRIP_BROWSER_LOGS !== 'false'
 
   public get buildId() {
     return this._buildId
   }
 
   public get cliOutput() {
-    return this.stripBrowserLogsFromOutput
-      ? stripBrowserLogs(this._cliOutput)
-      : this._cliOutput
+    return this._cliOutput
   }
 
   public async setup(parentSpan: Span) {
