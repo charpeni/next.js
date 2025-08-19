@@ -12,7 +12,7 @@ import {
   type LogMethod,
   type ConsoleEntry,
   UNDEFINED_MARKER,
-} from '../../../next-devtools/shared/forward-logs-shared'
+} from '../../../next-devtools/shared/nextjs'
 import type { NextConfigComplete } from '../../config-shared'
 
 export function getDisplayedSourceLocation(

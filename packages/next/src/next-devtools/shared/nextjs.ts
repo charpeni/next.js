@@ -1,3 +1,7 @@
+/**
+ * This file path is shown to users if not ignore listed, so it's important its concise
+ * and clearly indicates next.js is patching logs to avoid confusion
+ */
 export type LogMethod =
   | 'log'
   | 'info'
