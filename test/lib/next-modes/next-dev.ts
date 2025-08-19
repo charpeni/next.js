@@ -1,7 +1,7 @@
 import spawn from 'cross-spawn'
 import { Span } from 'next/dist/trace'
 import { NextInstance } from './base'
-import { retry, waitFor } from 'next-test-utils'
+import { retry, waitFor, stripBrowserLogs } from 'next-test-utils'
 import stripAnsi from 'strip-ansi'
 
 export class NextDevInstance extends NextInstance {
@@ -17,7 +17,7 @@ export class NextDevInstance extends NextInstance {
   }
 
   public get cliOutput() {
-    return this._cliOutput || ''
+    return stripBrowserLogs(this._cliOutput || '')
   }
 
   public async start() {

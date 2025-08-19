@@ -10,6 +10,7 @@ import {
 } from '../../../scripts/reset-project.mjs'
 import fetch from 'node-fetch'
 import { Span } from 'next/dist/trace'
+import { stripBrowserLogs } from '../next-test-utils'
 
 export class NextDeployInstance extends NextInstance {
   private _cliOutput: string
@@ -169,7 +170,7 @@ export class NextDeployInstance extends NextInstance {
   }
 
   public get cliOutput() {
-    return this._cliOutput || ''
+    return stripBrowserLogs(this._cliOutput || '')
   }
 
   public async start() {

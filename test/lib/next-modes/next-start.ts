@@ -4,6 +4,7 @@ import { NextInstance } from './base'
 import spawn from 'cross-spawn'
 import { Span } from 'next/dist/trace'
 import stripAnsi from 'strip-ansi'
+import { stripBrowserLogs } from '../next-test-utils'
 
 export class NextStartInstance extends NextInstance {
   private _buildId: string
@@ -15,7 +16,7 @@ export class NextStartInstance extends NextInstance {
   }
 
   public get cliOutput() {
-    return this._cliOutput
+    return stripBrowserLogs(this._cliOutput)
   }
 
   public async setup(parentSpan: Span) {
