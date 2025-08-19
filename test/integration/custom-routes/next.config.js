@@ -1,5 +1,4 @@
 module.exports = {
-  browserDebugInfoInTerminal: false,
   // REPLACEME
   experimental: {
     caseSensitiveRoutes: true,

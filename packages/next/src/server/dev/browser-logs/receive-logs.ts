@@ -556,6 +556,10 @@ export async function handleLog(
       }
     }
   }
+  // this gives us the power to strip browser logs from output to not break existing tests
+  if (process.env.__NEXT_TEST_MODE) {
+    console.log(cyan('[browser end]'))
+  }
 }
 
 // the data is used later when we need to get sourcemaps for error stacks

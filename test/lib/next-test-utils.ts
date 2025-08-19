@@ -41,6 +41,40 @@ export { shouldUseTurbopack }
 export const nextServer = server
 export const pkg = _pkg
 
+/**
+ * Strips browser console logs from server output.
+ * Browser logs are wrapped between [browser] and [browser end] markers in test mode.
+ * This function removes everything between these markers, including the markers themselves.
+ */
+export function stripBrowserLogs(output: string): string {
+  if (!output.includes('[browser]')) {
+    return output
+  }
+
+  const lines = output.split('\n')
+  const filteredLines: string[] = []
+  let inBrowserLog = false
+
+  for (const line of lines) {
+    // Check for browser log start (with or without ANSI color codes)
+    if (line.includes('[browser]')) {
+      inBrowserLog = true
+      continue
+    }
+    // Check for browser log end (with or without ANSI color codes)
+    if (line.includes('[browser end]')) {
+      inBrowserLog = false
+      continue
+    }
+    // Only include lines that are not part of browser logs
+    if (!inBrowserLog) {
+      filteredLines.push(line)
+    }
+  }
+
+  return filteredLines.join('\n')
+}
+
 export function initNextServerScript(
   scriptPath: string,
   successRegexp: RegExp,
