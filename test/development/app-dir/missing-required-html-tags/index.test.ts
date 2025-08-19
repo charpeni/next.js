@@ -44,6 +44,8 @@ describe('app-dir - missing required html tags', () => {
 
     await assertHasRedbox(browser)
 
+    // TODO: This should show "Missing <html> tags" but currently shows both missing
+    // This appears to be a bug where the error doesn't update after HMR
     await expect(browser).toDisplayRedbox(`
      {
        "description": "Missing <html> tags in the root layout.
