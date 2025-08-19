@@ -1461,6 +1461,7 @@ export const defaultConfig = Object.freeze({
   devIndicators: {
     position: 'bottom-left',
   },
+  // Enable browser logs by default in development
   browserDebugInfoInTerminal: true,
   onDemandEntries: {
     maxInactiveAge: 60 * 1000,

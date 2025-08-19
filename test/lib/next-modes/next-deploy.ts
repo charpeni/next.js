@@ -15,6 +15,9 @@ import { stripBrowserLogs } from '../next-test-utils'
 export class NextDeployInstance extends NextInstance {
   private _cliOutput: string
   private _buildId: string
+  // Allow tests to control browser log filtering
+  public stripBrowserLogsFromOutput: boolean =
+    process.env.NEXT_TEST_STRIP_BROWSER_LOGS !== 'false'
 
   public get buildId() {
     // get deployment ID via fetch since we can't access
@@ -170,7 +173,9 @@ export class NextDeployInstance extends NextInstance {
   }
 
   public get cliOutput() {
-    return stripBrowserLogs(this._cliOutput || '')
+    return this.stripBrowserLogsFromOutput
+      ? stripBrowserLogs(this._cliOutput || '')
+      : this._cliOutput || ''
   }
 
   public async start() {
