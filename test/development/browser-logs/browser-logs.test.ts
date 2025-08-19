@@ -54,6 +54,9 @@ describe(`Terminal Logging (${bundlerName})`, () => {
         files: {
           pages: new FileRef(join(__dirname, 'fixtures/pages')),
         },
+        env: {
+          NEXT_TEST_BROWSER_LOGS: '1',
+        },
       })
     })
 
@@ -156,6 +159,9 @@ describe(`Terminal Logging (${bundlerName})`, () => {
         files: {
           app: new FileRef(join(__dirname, 'fixtures/app')),
         },
+        env: {
+          NEXT_TEST_BROWSER_LOGS: '1',
+        },
       })
     })
 
@@ -212,6 +218,9 @@ describe(`Terminal Logging (${bundlerName})`, () => {
       next = await createNext({
         files: {
           app: new FileRef(join(__dirname, 'fixtures/app')),
+        },
+        env: {
+          NEXT_TEST_BROWSER_LOGS: '1',
         },
       })
     })
@@ -272,6 +281,9 @@ describe(`Terminal Logging (${bundlerName})`, () => {
         files: {
           app: new FileRef(join(__dirname, 'fixtures/app')),
         },
+        env: {
+          NEXT_TEST_BROWSER_LOGS: '1',
+        },
       })
     })
 
@@ -313,6 +325,9 @@ describe(`Terminal Logging (${bundlerName})`, () => {
         next = await createNext({
           files: {
             pages: new FileRef(join(__dirname, 'fixtures/pages')),
+          },
+          env: {
+            NEXT_TEST_BROWSER_LOGS: '1',
           },
         })
       })
